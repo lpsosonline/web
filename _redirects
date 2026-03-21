@@ -1,0 +1,15 @@
+# ─── Clean URLs (no .html extension needed) ───────────────────────────────────
+/login                  /login.html                 200
+/register               /register.html              200
+/proctor-home           /proctor-home.html          200
+/forgot-password        /forgot-password.html       200
+/terms                  /terms.html                 200
+/privacy                /privacy.html               200
+/contact                /contact.html               200
+
+# ─── Legacy /v2/ routes (if you used them before) ──────────────────────────────
+/v2/login               /login.html                 200
+/v2/register            /register.html              200
+
+# ─── 404 fallback — must be last ───────────────────────────────────────────────
+/*                      /404.html                   404
