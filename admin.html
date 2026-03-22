@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin — LPSOS</title>
+<meta http-equiv="Content-Security-Policy"
+  content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' https://qwcngezsbtlorkvgyeqz.supabase.co; img-src 'self' https://raw.githubusercontent.com https://github.com data:;"/>
+<link rel="icon" href="https://raw.githubusercontent.com/190031124ravi/images/main/lpsos.ico"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f2faf6;--ink:#0f2219;--ink2:#2d5043;
+  --muted:#7a9e8e;--faint:#c0d8ce;--border:#d5ebe0;
+  --primary:#0f9b6e;--primary2:#0a7a56;--primary3:#e4f5ed;
+  --pg:rgba(15,155,110,.12);--teal:#0d8fa0;--nav-h:68px;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--ink);background:var(--bg);overflow-x:hidden;min-height:100vh;display:flex;flex-direction:column;}
+
+/* BG */
+.bg-fixed{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:linear-gradient(150deg,#f2faf6 0%,#e8f5ee 40%,#edfaf4 70%,#e4f7ed 100%);}
+.bg-blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.38;animation:blobF 10s ease-in-out infinite;}
+.b1{width:560px;height:560px;background:radial-gradient(#a7f3d0,#6ee7b7);top:-180px;right:-140px;}
+.b2{width:420px;height:420px;background:radial-gradient(#99f6e4,#5eead4);bottom:-110px;left:-100px;animation-delay:-4s;}
+.b3{width:280px;height:280px;background:radial-gradient(#d1fae5,#a7f3d0);top:50%;left:35%;animation-delay:-7s;}
+@keyframes blobF{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(18px,-18px) scale(1.05);}66%{transform:translate(-14px,14px) scale(.96);}}
+.bg-dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(15,155,110,.055) 1px,transparent 1px);background-size:32px 32px;}
+
+/* NAVBAR */
+.navbar{position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:200;background:rgba(255,255,255,.93);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);box-shadow:0 2px 16px rgba(15,155,110,.07);}
+.nav-inner{max-width:1100px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 28px;}
+.nav-brand{display:flex;align-items:center;gap:11px;text-decoration:none;flex-shrink:0;}
+.nav-logo{width:42px;height:42px;border-radius:10px;border:2px solid var(--primary);overflow:hidden;background:var(--primary3);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nav-logo img{width:100%;height:100%;object-fit:contain;border-radius:8px;padding:2px;}
+.nav-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--ink);line-height:1.2;}
+.nav-sub{font-size:10.5px;color:var(--muted);font-weight:500;letter-spacing:.07em;text-transform:uppercase;}
+.nav-back{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:600;color:var(--primary2);background:var(--primary3);border:1.5px solid var(--primary);border-radius:8px;padding:8px 18px;text-decoration:none;transition:background .2s,transform .15s;white-space:nowrap;}
+.nav-back:hover{background:var(--primary);color:#fff;transform:translateY(-1px);}
+
+/* PAGE */
+.page{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(var(--nav-h) + 48px) 24px 72px;}
+
+/* CARD */
+.card{background:rgba(255,255,255,.97);border-radius:22px;padding:44px 40px 38px;box-shadow:0 8px 44px rgba(15,155,110,.12),0 2px 8px rgba(0,0,0,.04),0 0 0 1px rgba(15,155,110,.06);position:relative;overflow:hidden;animation:cardIn .65s .1s cubic-bezier(.22,1,.36,1) both;width:100%;max-width:440px;text-align:center;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--teal));border-radius:22px 22px 0 0;}
+@keyframes cardIn{from{opacity:0;transform:translateY(28px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* SHIELD ICON */
+.shield-wrap{width:80px;height:80px;border-radius:22px;background:linear-gradient(135deg,var(--primary3),#a7f3d0);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;box-shadow:0 8px 28px rgba(15,155,110,.18);animation:popIn .6s .2s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes popIn{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+.shield-wrap i{font-size:36px;color:var(--primary);}
+
+.card h2{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.2;}
+.card h2 em{font-style:italic;color:var(--primary);}
+.card p{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:28px;max-width:320px;margin-left:auto;margin-right:auto;}
+
+/* BUTTON */
+.btn-login{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:600;padding:14px 36px;border-radius:13px;border:none;cursor:pointer;text-decoration:none;box-shadow:0 6px 24px rgba(15,155,110,.32);transition:transform .18s,box-shadow .2s;width:100%;}
+.btn-login:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(15,155,110,.38);}
+
+/* NOTE */
+.note{margin-top:20px;display:flex;align-items:flex-start;gap:9px;background:rgba(15,155,110,.06);border:1px solid rgba(15,155,110,.15);border-radius:11px;padding:12px 14px;text-align:left;}
+.note i{font-size:14px;color:var(--primary);flex-shrink:0;margin-top:2px;}
+.note span{font-size:12.5px;color:var(--muted);line-height:1.6;}
+
+/* BADGE */
+.restricted-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.18);border-radius:99px;padding:5px 14px;font-size:12px;font-weight:600;color:#991b1b;margin-bottom:20px;}
+.restricted-badge i{font-size:11px;}
+
+@media(max-width:600px){
+  .nav-inner{padding:0 16px;}
+  .nav-sub{display:none;}
+  .page{padding:calc(var(--nav-h) + 36px) 16px 60px;}
+  .card{padding:32px 20px 28px;}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-fixed">
+  <div class="bg-blob b1"></div><div class="bg-blob b2"></div><div class="bg-blob b3"></div>
+  <div class="bg-dots"></div>
+</div>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="index.html">
+      <div class="nav-logo" id="nLW">
+        <img src="https://github.com/190031124ravi/images/blob/main/lpsosimage12.jpg?raw=true" alt="LPS" id="nLI"/>
+      </div>
+      <div>
+        <div class="nav-name">LPS Omniscient Solutions</div>
+        <div class="nav-sub">Admin Portal</div>
+      </div>
+    </a>
+    <a class="nav-back" href="index.html">
+      <i class="fa-solid fa-arrow-left" style="font-size:13px;"></i>Back to Website
+    </a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="card">
+
+    <div class="shield-wrap">
+      <i class="fa-solid fa-shield-halved"></i>
+    </div>
+
+    <div class="restricted-badge">
+      <i class="fa-solid fa-lock"></i> Restricted Area
+    </div>
+
+    <h2>Admin <em>Access</em></h2>
+    <p>This area is restricted to authorised LPS Omniscient Solutions administrators only. All actions are logged.</p>
+
+    <a class="btn-login" href="admin-login.html">
+      <i class="fa-solid fa-right-to-bracket" style="font-size:14px;"></i>
+      Go to Admin Login
+    </a>
+
+    <div class="note">
+      <i class="fa-solid fa-circle-info"></i>
+      <span>Only authorised staff should access this panel. Unauthorised access attempts are recorded and may result in legal action.</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ✅ config.js loaded — checks if already logged in and redirects -->
+<script src="config.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+document.getElementById('nLI').onerror = function(){
+  document.getElementById('nLW').innerHTML = '<i class="fa-solid fa-tv" style="font-size:20px;color:#0f9b6e;"></i>';
+};
+
+// If already logged in as admin → skip this page and go straight to home
+document.addEventListener('DOMContentLoaded', async function(){
+  var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  try {
+    var res = await _sb.auth.getSession();
+    if (res.data && res.data.session) {
+      // Verify they are actually in admin_users table
+      var profile = await _sb.rpc('get_admin_profile');
+      if (profile.data && profile.data.is_admin) {
+        window.location.replace('admin-home.html');
+      }
+    }
+  } catch(e) {
+    // Not logged in — stay on this page
+  }
+});
+</script>
+</body>
+</html>

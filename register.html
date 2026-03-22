@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Register — LPSOS</title>
+<link rel="icon" href="https://raw.githubusercontent.com/190031124ravi/images/main/lpsos.ico"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f2faf6;--white:#fff;--ink:#0f2219;--ink2:#2d5043;
+  --muted:#7a9e8e;--faint:#c0d8ce;--border:#d5ebe0;
+  --primary:#0f9b6e;--primary2:#0a7a56;--primary3:#e4f5ed;
+  --pg:rgba(15,155,110,.12);--teal:#0d8fa0;
+  --error:#dc2626;--success:#059669;--nav-h:68px;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--ink);background:var(--bg);overflow-x:hidden;}
+.bg-fixed{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(150deg,#f2faf6 0%,#e8f5ee 40%,#edfaf4 70%,#e4f7ed 100%);overflow:hidden;}
+.bg-blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.38;animation:blobF 10s ease-in-out infinite;}
+.b1{width:600px;height:600px;background:radial-gradient(#a7f3d0,#6ee7b7);top:-200px;right:-150px;}
+.b2{width:440px;height:440px;background:radial-gradient(#99f6e4,#5eead4);bottom:-120px;left:-100px;animation-delay:-4s;}
+.b3{width:280px;height:280px;background:radial-gradient(#d1fae5,#a7f3d0);top:50%;left:35%;animation-delay:-7s;}
+.bg-dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(15,155,110,.055) 1px,transparent 1px);background-size:32px 32px;}
+@keyframes blobF{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(20px,-20px) scale(1.05);}66%{transform:translate(-15px,15px) scale(.96);}}
+.navbar{position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:200;background:rgba(255,255,255,.93);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);box-shadow:0 2px 16px rgba(15,155,110,.07);}
+.nav-inner{max-width:1100px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 28px;}
+.nav-brand{display:flex;align-items:center;gap:11px;text-decoration:none;flex-shrink:0;}
+.nav-logo{width:42px;height:42px;border-radius:10px;border:2px solid var(--primary);overflow:hidden;background:var(--primary3);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nav-logo img{width:100%;height:100%;object-fit:contain;border-radius:8px;padding:2px;}
+.nav-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--ink);line-height:1.2;}
+.nav-sub{font-size:10.5px;color:var(--muted);font-weight:500;letter-spacing:.07em;text-transform:uppercase;}
+.nav-home-icon{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;background:var(--primary);color:#fff;border-radius:10px;border:none;text-decoration:none;transition:background .2s,transform .15s,box-shadow .2s;box-shadow:0 4px 14px rgba(15,155,110,.25);flex-shrink:0;}
+.nav-home-icon svg{width:18px;height:18px;}
+.nav-home-icon:hover{background:var(--primary2);transform:translateY(-1px);box-shadow:0 6px 20px rgba(15,155,110,.35);}
+.page{position:relative;z-index:1;min-height:100vh;padding-top:calc(var(--nav-h) + 60px);padding-bottom:60px;padding-left:20px;padding-right:20px;display:flex;flex-direction:column;align-items:center;}
+.page-title{width:100%;max-width:500px;text-align:center;margin-bottom:24px;animation:slideD .6s cubic-bezier(.22,1,.36,1) both;}
+@keyframes slideD{from{opacity:0;transform:translateY(-22px)}to{opacity:1;transform:translateY(0)}}
+.page-title h1{font-family:'Playfair Display',serif;font-size:clamp(24px,5vw,34px);font-weight:700;color:var(--ink);margin-bottom:6px;line-height:1.2;}
+.page-title h1 em{font-style:italic;color:var(--primary);}
+.page-title p{font-size:14px;color:var(--muted);line-height:1.6;}
+.card{width:100%;max-width:500px;background:rgba(255,255,255,.97);border-radius:22px;padding:36px 38px 32px;box-shadow:0 8px 40px rgba(15,155,110,.11),0 2px 8px rgba(0,0,0,.04),0 0 0 1px rgba(15,155,110,.06);position:relative;overflow:hidden;animation:cardR .65s .1s cubic-bezier(.22,1,.36,1) both;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--teal));border-radius:22px 22px 0 0;}
+@keyframes cardR{from{opacity:0;transform:translateY(28px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.progress{display:flex;align-items:flex-start;margin-bottom:30px;}
+.snode{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
+.sdot{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;border:2px solid var(--faint);color:var(--muted);background:var(--bg);transition:all .4s cubic-bezier(.34,1.56,.64,1);z-index:1;}
+.sdot.act{border-color:var(--primary);background:var(--primary);color:#fff;transform:scale(1.1);box-shadow:0 4px 14px rgba(15,155,110,.28);}
+.sdot.done{border-color:var(--success);background:var(--success);color:#fff;transform:scale(1.05);}
+.slbl{font-size:11px;color:var(--muted);letter-spacing:.05em;font-weight:500;transition:color .3s;}
+.slbl.act{color:var(--primary);font-weight:600;}
+.slbl.done{color:var(--success);}
+.sline{flex:1;height:2px;background:var(--border);margin-top:16px;transition:background .5s;}
+.sline.done{background:var(--success);}
+.sec-head{margin-bottom:22px;}
+.step-pill{display:inline-flex;align-items:center;background:var(--primary3);color:var(--primary2);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 11px;border-radius:99px;margin-bottom:9px;border:1px solid rgba(15,155,110,.18);}
+.sec-head h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink);line-height:1.25;margin-bottom:4px;}
+.sec-head p{font-size:13px;color:var(--muted);line-height:1.55;}
+.field{margin-bottom:17px;}
+.field label{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink2);font-weight:700;margin-bottom:7px;}
+.iw{position:relative;}
+.iw svg.ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--faint);pointer-events:none;transition:color .25s;}
+.iw input{width:100%;padding:12px 13px 12px 41px;border:1.5px solid var(--border);border-radius:13px;background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color .25s,box-shadow .25s,background .2s;-webkit-appearance:none;appearance:none;}
+.iw input::placeholder{color:var(--faint);}
+.iw input:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px var(--pg);}
+.iw input:focus~svg.ic{color:var(--primary);}
+.iw input.inv{border-color:var(--error);background:#fef2f2;}
+.iw input.inv~svg.ic{color:var(--error);}
+.iw input.ok{border-color:var(--success);background:#f0fdf4;}
+.iw input.ok~svg.ic{color:var(--success);}
+.eye{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);display:flex;padding:4px;transition:color .2s;}
+.eye:hover{color:var(--ink);}
+.ferr{font-size:11.5px;color:var(--error);margin-top:4px;min-height:16px;display:flex;align-items:center;gap:4px;}
+.rgroup{display:flex;gap:9px;flex-wrap:wrap;}
+.rcard{flex:1;min-width:82px;border:1.5px solid var(--border);border-radius:12px;padding:10px 12px;cursor:pointer;display:flex;align-items:center;gap:9px;transition:all .22s;background:var(--bg);user-select:none;}
+.rcard:hover{border-color:var(--primary);background:#fff;box-shadow:0 2px 10px rgba(15,155,110,.1);transform:translateY(-1px);}
+.rcard.sel{border-color:var(--primary);background:var(--primary3);box-shadow:0 0 0 2.5px var(--pg);}
+.rdot{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--faint);display:grid;place-items:center;flex-shrink:0;transition:all .22s;}
+.rcard.sel .rdot{border-color:var(--primary);}
+.rdot-i{width:8px;height:8px;border-radius:50%;background:var(--primary);opacity:0;transform:scale(0);transition:all .25s cubic-bezier(.34,1.56,.64,1);}
+.rcard.sel .rdot-i{opacity:1;transform:scale(1);}
+.rlbl{font-size:13.5px;font-weight:500;color:var(--ink2);transition:color .2s;}
+.rcard.sel .rlbl{color:var(--primary2);font-weight:600;}
+.yngroup{display:flex;gap:9px;}
+.ynbtn{flex:1;padding:12px 13px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:500;color:var(--muted);transition:all .22s;display:flex;align-items:center;justify-content:center;gap:7px;}
+.ynbtn:hover{border-color:var(--primary);color:var(--ink);background:#fff;transform:translateY(-1px);}
+.ynbtn.sy{border-color:var(--success);background:#f0fdf4;color:var(--success);box-shadow:0 0 0 2.5px rgba(5,150,105,.1);}
+.ynbtn.sn{border-color:var(--primary);background:var(--primary3);color:var(--primary2);box-shadow:0 0 0 2.5px var(--pg);}
+.strbar{margin-top:8px;display:none;}
+.strbar.on{display:block;}
+.str-track{height:4px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:4px;}
+.str-fill{height:100%;border-radius:99px;transition:width .4s,background .4s;width:0;}
+.str-lbl{font-size:11.5px;color:var(--muted);font-weight:500;}
+.btn-wrap{margin-top:8px;}
+.btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;border:none;border-radius:13px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;position:relative;overflow:hidden;transition:transform .18s,box-shadow .2s;box-shadow:0 4px 18px rgba(15,155,110,.28);}
+.btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(15,155,110,.34);}
+.btn:disabled{opacity:.6;cursor:not-allowed;}
+.bt{display:block;transition:opacity .2s;}
+.bl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
+.btn.ld .bt{opacity:0;}
+.btn.ld .bl{opacity:1;}
+.spin{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;}
+@keyframes rot{to{transform:rotate(360deg)}}
+.back{display:inline-flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:var(--muted);font-weight:500;margin-bottom:20px;padding:4px 0;transition:color .2s;}
+.back:hover{color:var(--primary);}
+.sinrow{text-align:center;margin-top:16px;font-size:13px;color:var(--muted);}
+.sinrow a{color:var(--primary2);font-weight:600;text-decoration:none;}
+.sinrow a:hover{text-decoration:underline;}
+.terms-txt{font-size:12px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.65;}
+.terms-txt a{color:var(--primary);font-weight:500;text-decoration:none;}
+.step-panel{animation:panFwd .4s cubic-bezier(.22,1,.36,1) both;}
+.step-panel.rev{animation:panBk .4s cubic-bezier(.22,1,.36,1) both;}
+@keyframes panFwd{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes panBk{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+/* SUCCESS */
+.suc{display:none;text-align:center;padding:12px 0;animation:panFwd .5s cubic-bezier(.22,1,.36,1) both;}
+.suc-conf{display:flex;justify-content:center;gap:5px;margin-bottom:16px;}
+.suc-conf span{width:9px;height:9px;border-radius:2px;animation:confD .55s ease both;}
+.suc-conf span:nth-child(1){background:var(--primary);animation-delay:.06s;}
+.suc-conf span:nth-child(2){background:var(--teal);animation-delay:.14s;}
+.suc-conf span:nth-child(3){background:#d97706;animation-delay:.22s;}
+.suc-conf span:nth-child(4){background:var(--success);animation-delay:.10s;}
+.suc-conf span:nth-child(5){background:#7c3aed;animation-delay:.18s;}
+@keyframes confD{from{opacity:0;transform:translateY(-12px) rotate(0)}to{opacity:1;transform:translateY(0) rotate(45deg)}}
+.suc-ring{width:80px;height:80px;background:linear-gradient(135deg,var(--primary),var(--teal));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 12px 36px rgba(15,155,110,.28);animation:popIn .6s .05s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes popIn{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+.suc-ring svg{width:34px;height:34px;color:#fff;}
+.suc h3{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--ink);margin-bottom:8px;}
+.suc h3 em{font-style:italic;color:var(--primary);}
+.suc-msg{font-size:13.5px;color:var(--muted);line-height:1.8;margin-bottom:22px;}
+.suc-login{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;padding:11px 28px;border-radius:99px;border:none;cursor:pointer;text-decoration:none;box-shadow:0 4px 16px rgba(15,155,110,.28);transition:background .2s,transform .18s;}
+.suc-login:hover{background:var(--primary2);transform:translateY(-2px);}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(70px);padding:12px 20px;border-radius:12px;font-size:13.5px;font-weight:500;opacity:0;transition:all .38s cubic-bezier(.34,1.56,.64,1);z-index:9999;width:max-content;max-width:90vw;display:flex;align-items:center;gap:9px;box-shadow:0 8px 28px rgba(0,0,0,.12);}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1;}
+.toast.scs{background:rgba(5,150,105,.95);color:#fff;}
+.toast.err{background:rgba(220,38,38,.95);color:#fff;}
+.toast.wrn{background:rgba(180,83,9,.95);color:#fff;}
+.toast.inf{background:rgba(255,255,255,.97);border:1px solid var(--border);color:var(--ink);}
+@media(max-width:600px){
+  .nav-inner{padding:0 16px;}
+  .nav-name{font-size:13px;}
+  .nav-sub{display:none;}
+  .card{padding:26px 18px 22px;border-radius:18px;}
+  .rgroup{flex-direction:column;}
+  .page-title h1{font-size:24px;}
+}
+</style>
+</head>
+<body>
+<div class="bg-fixed">
+  <div class="bg-blob b1"></div><div class="bg-blob b2"></div><div class="bg-blob b3"></div>
+  <div class="bg-dots"></div>
+</div>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="index.html">
+      <div class="nav-logo" id="nLW">
+        <img src="https://github.com/190031124ravi/images/blob/main/lpsosimage12.jpg?raw=true" alt="LPS" id="nLI"/>
+      </div>
+      <div>
+        <div class="nav-name">LPS Omniscient Solutions</div>
+        <div class="nav-sub">Excellence in Proctoring</div>
+      </div>
+    </a>
+    <a class="nav-home-icon" href="index.html" title="Go to Home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+    </a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-title">
+    <h1>Create Your <em>Account</em></h1>
+    <p>Join LPS Omniscient Solutions in just a few simple steps.</p>
+  </div>
+
+  <div class="card">
+    <div class="progress" id="progBar">
+      <div class="snode"><div class="sdot act" id="d1">1</div><div class="slbl act" id="l1">Personal</div></div>
+      <div class="sline" id="ln1"></div>
+      <div class="snode"><div class="sdot" id="d2">2</div><div class="slbl" id="l2">Details</div></div>
+      <div class="sline" id="ln2"></div>
+      <div class="snode"><div class="sdot" id="d3">3</div><div class="slbl" id="l3">Security</div></div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div id="s1" class="step-panel">
+      <div class="sec-head">
+        <div class="step-pill">Step 1 of 3</div>
+        <h2>Personal Information</h2>
+        <p>Enter your basic contact details to get started.</p>
+      </div>
+      <div class="field"><label>Full Name</label>
+        <div class="iw">
+          <input type="text" id="name" placeholder="e.g. Ravi Kumar" autocomplete="name" oninput="lv(this,'name')"/>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div><div class="ferr" id="e-name"></div>
+      </div>
+      <div class="field"><label>Email Address</label>
+        <div class="iw">
+          <input type="email" id="email" placeholder="you@example.com" autocomplete="email" oninput="lv(this,'email')"/>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        </div>
+        <div class="ferr" id="e-email"></div>
+      </div>
+      <div class="field"><label>Phone Number</label>
+        <div class="iw">
+          <input type="tel" id="phone" placeholder="9876543210" autocomplete="tel" maxlength="10" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10);lv(this,'phone')"/>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.15 12a19.79 19.79 0 0 1-3-8.57A2 2 0 0 1 3.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg>
+        </div>
+        <div class="ferr" id="e-phone"></div>
+      </div>
+      <div class="btn-wrap"><button class="btn" id="step1Btn" onclick="go2()"><span class="bt">Continue →</span><span class="bl"><span class="spin"></span></span></button></div>
+      <div class="sinrow">Already registered? <a href="login.html">Sign in here</a></div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div id="s2" style="display:none">
+      <button class="back" onclick="setStep(1,true)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back
+      </button>
+      <div class="sec-head">
+        <div class="step-pill">Step 2 of 3</div>
+        <h2>Additional Details</h2>
+        <p>Help us understand your background better.</p>
+      </div>
+      <div class="field"><label>Gender</label>
+        <div class="rgroup" id="rg">
+          <div class="rcard" onclick="pickG('male',this)"><div class="rdot"><div class="rdot-i"></div></div><span class="rlbl">Male</span></div>
+          <div class="rcard" onclick="pickG('female',this)"><div class="rdot"><div class="rdot-i"></div></div><span class="rlbl">Female</span></div>
+          <div class="rcard" onclick="pickG('other',this)"><div class="rdot"><div class="rdot-i"></div></div><span class="rlbl">Other</span></div>
+        </div>
+        <div class="ferr" id="e-gender"></div>
+      </div>
+      <div class="field"><label>Experience in Proctoring?</label>
+        <div class="yngroup">
+          <button type="button" class="ynbtn" id="yn-y" onclick="pickYN('yes')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Yes, I have
+          </button>
+          <button type="button" class="ynbtn" id="yn-n" onclick="pickYN('no')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>No, I don't
+          </button>
+        </div>
+        <div class="ferr" id="e-proctor"></div>
+      </div>
+      <div class="btn-wrap"><button class="btn" onclick="go3()"><span class="bt">Continue →</span><span class="bl"><span class="spin"></span></span></button></div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div id="s3" style="display:none">
+      <button class="back" onclick="setStep(2,true)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back
+      </button>
+      <div class="sec-head">
+        <div class="step-pill">Step 3 of 3</div>
+        <h2>Secure Your Account</h2>
+        <p>Choose a strong password to protect your account.</p>
+      </div>
+      <div class="field"><label>Password</label>
+        <div class="iw">
+          <input type="password" id="password" placeholder="Min. 8 characters" autocomplete="new-password" oninput="chkPW()"/>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <button type="button" class="eye" onclick="togEye('password',this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="strbar" id="strBar"><div class="str-track"><div class="str-fill" id="strFi"></div></div><div class="str-lbl" id="strLb"></div></div>
+        <div class="ferr" id="e-password"></div>
+      </div>
+      <div class="field"><label>Confirm Password</label>
+        <div class="iw">
+          <input type="password" id="confirm" placeholder="Re-enter your password" autocomplete="new-password" oninput="lv(this,'confirm')"/>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <button type="button" class="eye" onclick="togEye('confirm',this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="ferr" id="e-confirm"></div>
+      </div>
+      <div class="btn-wrap">
+        <button class="btn" id="subBtn" onclick="doReg()">
+          <span class="bt">✦ Create My Account</span>
+          <span class="bl"><span class="spin"></span></span>
+        </button>
+      </div>
+      <p class="terms-txt">By registering you agree to LPS Omniscient Solutions' <a href="terms.html">Terms</a> &amp; <a href="privacy.html">Privacy Policy</a></p>
+    </div>
+
+    <!-- SUCCESS — no auto-redirect, user clicks Go to Login manually -->
+    <div class="suc" id="sucScreen">
+      <div class="suc-conf"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="suc-ring">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <h3>Welcome <em>Aboard!</em></h3>
+      <p class="suc-msg">
+        Your account has been created successfully.<br/>
+        Please sign in with your email and password to continue.
+      </p>
+      <a href="login.html" class="suc-login">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Go to Login
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- config.js must be first — it defines SUPABASE_URL and SUPABASE_KEY -->
+<script src="config.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+document.getElementById('nLI').onerror = function(){
+  document.getElementById('nLW').innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0f9b6e" stroke-width="1.6"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>';
+};
+
+var tT;
+function showToast(msg, type){
+  var t = document.getElementById('toast');
+  t.innerHTML = '<span>' + msg + '</span>';
+  t.className = 'toast on ' + (type || 'inf');
+  clearTimeout(tT);
+  tT = setTimeout(function(){ t.classList.remove('on'); }, 4500);
+}
+
+var ST = { gender: null, proctor: null };
+
+function rName(v){ return v.trim().length >= 2 ? '' : 'Full name must be at least 2 characters.'; }
+function rEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? '' : 'Enter a valid email address.'; }
+function rPhone(v){ return /^\d{10}$/.test(v.trim()) ? '' : 'Enter a valid 10-digit phone number.'; }
+function rPwd(v){ return v.length >= 8 ? '' : 'Password must be at least 8 characters.'; }
+function rCfm(v){ var p = document.getElementById('password'); return (p && v === p.value) ? '' : 'Passwords do not match.'; }
+var RU = { name: rName, email: rEmail, phone: rPhone, password: rPwd, confirm: rCfm };
+
+function lv(inp, field){
+  var fn = RU[field]; if (!fn) return;
+  var err = fn(inp.value);
+  var el = document.getElementById('e-' + field);
+  if (el) el.textContent = err;
+  inp.classList.toggle('inv', !!(err && inp.value.length > 0));
+  inp.classList.toggle('ok', !!(!err && inp.value.length > 0));
+}
+function vf(id){
+  var inp = document.getElementById(id); if (!inp) return true;
+  var fn = RU[id]; if (!fn) return true;
+  var err = fn(inp.value);
+  var el = document.getElementById('e-' + id);
+  if (el) el.textContent = err;
+  inp.classList.toggle('inv', !!err);
+  inp.classList.toggle('ok', !err);
+  return !err;
+}
+
+function pickG(val, card){
+  ST.gender = val;
+  document.querySelectorAll('#rg .rcard').forEach(function(c){ c.classList.remove('sel'); });
+  card.classList.add('sel');
+  document.getElementById('e-gender').textContent = '';
+}
+function pickYN(val){
+  ST.proctor = val;
+  document.getElementById('yn-y').className = 'ynbtn' + (val === 'yes' ? ' sy' : '');
+  document.getElementById('yn-n').className = 'ynbtn' + (val === 'no' ? ' sn' : '');
+  document.getElementById('e-proctor').textContent = '';
+}
+function chkPW(){
+  var pw = document.getElementById('password').value;
+  var bar = document.getElementById('strBar'), fi = document.getElementById('strFi'), lb = document.getElementById('strLb');
+  if (!pw){ bar.classList.remove('on'); return; }
+  bar.classList.add('on');
+  var s = 0;
+  if (pw.length >= 8) s++; if (pw.length >= 12) s++;
+  if (/[A-Z]/.test(pw)) s++; if (/[0-9]/.test(pw)) s++; if (/[^A-Za-z0-9]/.test(pw)) s++;
+  var lvls = [
+    { w:'20%', c:'#dc2626', t:'Very weak' }, { w:'40%', c:'#ea580c', t:'Weak' },
+    { w:'60%', c:'#d97706', t:'Fair' }, { w:'80%', c:'#16a34a', t:'Strong' }, { w:'100%', c:'#059669', t:'Very strong' }
+  ];
+  var l = lvls[Math.max(0, Math.min(s - 1, 4))];
+  fi.style.width = l.w; fi.style.background = l.c; lb.textContent = l.t; lb.style.color = l.c;
+  lv(document.getElementById('password'), 'password');
+  var c = document.getElementById('confirm'); if (c && c.value) lv(c, 'confirm');
+}
+
+var EO = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+var EN = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+function togEye(id, btn){
+  var inp = document.getElementById(id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.querySelector('svg').innerHTML = inp.type === 'text' ? EO : EN;
+}
+
+function setStep(n, rev){
+  for (var i = 1; i <= 3; i++){
+    var p = document.getElementById('s' + i);
+    var dot = document.getElementById('d' + i);
+    var lbl = document.getElementById('l' + i);
+    p.style.display = (i === n) ? 'block' : 'none';
+    if (i === n) p.className = 'step-panel' + (rev ? ' rev' : '');
+    if (i < n){ dot.className = 'sdot done'; dot.textContent = '✓'; lbl.className = 'slbl done'; }
+    else if (i === n){ dot.className = 'sdot act'; dot.textContent = String(i); lbl.className = 'slbl act'; }
+    else { dot.className = 'sdot'; dot.textContent = String(i); lbl.className = 'slbl'; }
+    if (i < 3) document.getElementById('ln' + i).className = 'sline' + (i < n ? ' done' : '');
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function go2(){
+  var okFormat = vf('name') && vf('email') && vf('phone');
+  if (!okFormat){ showToast('Please fix the errors below.', 'err'); return; }
+  setStep(2, false);
+}
+
+function go3(){
+  var ok = true;
+  if (!ST.gender){ document.getElementById('e-gender').textContent = 'Please select your gender.'; ok = false; }
+  if (!ST.proctor){ document.getElementById('e-proctor').textContent = 'Please indicate proctoring experience.'; ok = false; }
+  if (!ok){ showToast('Please complete all fields.', 'err'); return; }
+  setStep(3, false);
+}
+
+async function doReg(){
+  if (!vf('password') || !vf('confirm')){
+    showToast('Please fix the password errors.', 'err');
+    return;
+  }
+
+  var btn = document.getElementById('subBtn');
+  btn.classList.add('ld');
+  btn.disabled = true;
+
+  var name     = document.getElementById('name').value.trim();
+  var email    = document.getElementById('email').value.trim();
+  var phone    = document.getElementById('phone').value.trim();
+  var password = document.getElementById('password').value;
+
+  try {
+
+    // ── STEP 1: Sign up (creates auth user, does NOT create a session) ──────
+    var ar = await _sb.auth.signUp({
+      email: email,
+      password: password,
+      options: { data: { display_name: name } }
+    });
+
+    if (ar.error) {
+      if (ar.error.message.toLowerCase().includes('already registered')) {
+        showToast('⚠ Email already registered. Please login.', 'err');
+        document.getElementById('email').classList.add('inv');
+        document.getElementById('email').classList.remove('ok');
+        document.getElementById('e-email').textContent = 'This email is already registered.';
+        setStep(1, true);
+      } else {
+        showToast(ar.error.message, 'err');
+      }
+      return;
+    }
+
+    var userId = ar.data.user.id;
+
+    // ── STEP 2: Wait for DB trigger to create the users row (retry loop) ────
+    var found = false;
+    for (var i = 0; i < 6; i++) {
+      await new Promise(function(r){ setTimeout(r, 500); });
+      var chk = await _sb.from('users').select('id').eq('id', userId).limit(1);
+      if (!chk.error && chk.data && chk.data.length > 0){ found = true; break; }
+    }
+    if (!found){
+      showToast('Account created but profile setup timed out. Please contact support.', 'wrn');
+      return;
+    }
+
+    // ── STEP 3: Update profile via SECURITY DEFINER RPC (no login needed) ──
+    var rpc = await _sb.rpc('complete_registration', {
+      p_user_id:  userId,
+      p_name:     name,
+      p_phone:    phone,
+      p_gender:   ST.gender,
+      p_proctor:  ST.proctor === 'yes'
+    });
+
+    if (rpc.error) {
+      if (rpc.error.message.toLowerCase().includes('duplicate key') ||
+          rpc.error.message.toLowerCase().includes('unique') ||
+          rpc.error.code === '23505') {
+        showToast('⚠ Phone number already registered.', 'err');
+        document.getElementById('phone').classList.add('inv');
+        document.getElementById('phone').classList.remove('ok');
+        document.getElementById('e-phone').textContent = 'This phone number is already registered.';
+        setStep(1, true);
+      } else {
+        showToast(rpc.error.message, 'err');
+      }
+      return;
+    }
+
+    // ── STEP 4: Show success — NO signIn, NO signOut, NO auto-redirect ──────
+    // User must manually click "Go to Login" and sign in themselves.
+    document.getElementById('s3').style.display = 'none';
+    document.getElementById('progBar').style.display = 'none';
+    document.getElementById('sucScreen').style.display = 'block';
+    showToast('Registration successful! 🎉', 'scs');
+
+  } catch(ex){
+    showToast(ex.message || 'Something went wrong.', 'err');
+  } finally {
+    btn.classList.remove('ld');
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>

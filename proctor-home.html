@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Proctor Home — LPSOS</title>
+<meta http-equiv="Content-Security-Policy"
+  content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' https://qwcngezsbtlorkvgyeqz.supabase.co; img-src 'self' https://raw.githubusercontent.com https://github.com data:;"/>
+<link rel="icon" href="https://raw.githubusercontent.com/190031124ravi/images/main/lpsos.ico"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f2faf6;--ink:#0f2219;--ink2:#2d5043;
+  --muted:#7a9e8e;--faint:#c0d8ce;--border:#d5ebe0;
+  --primary:#0f9b6e;--primary2:#0a7a56;--primary3:#e4f5ed;
+  --pg:rgba(15,155,110,.12);--teal:#0d8fa0;
+  --error:#dc2626;--nav-h:68px;--info-h:32px;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--ink);background:var(--bg);overflow-x:hidden;min-height:100vh;display:flex;flex-direction:column;}
+.bg-fixed{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:linear-gradient(150deg,#f2faf6 0%,#e8f5ee 40%,#edfaf4 70%,#e4f7ed 100%);}
+.bg-blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.38;animation:blobF 10s ease-in-out infinite;}
+.b1{width:560px;height:560px;background:radial-gradient(#a7f3d0,#6ee7b7);top:-180px;right:-140px;}
+.b2{width:420px;height:420px;background:radial-gradient(#99f6e4,#5eead4);bottom:-110px;left:-100px;animation-delay:-4s;}
+.b3{width:280px;height:280px;background:radial-gradient(#d1fae5,#a7f3d0);top:50%;left:35%;animation-delay:-7s;}
+@keyframes blobF{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(18px,-18px) scale(1.05);}66%{transform:translate(-14px,14px) scale(.96);}}
+.bg-dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(15,155,110,.055) 1px,transparent 1px);background-size:32px 32px;}
+
+/* NAVBAR */
+.navbar{position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:200;background:rgba(255,255,255,.93);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);box-shadow:0 2px 16px rgba(15,155,110,.07);}
+.nav-inner{max-width:1100px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 28px;}
+.nav-brand{display:flex;align-items:center;gap:11px;text-decoration:none;flex-shrink:0;}
+.nav-logo{width:42px;height:42px;border-radius:10px;border:2px solid var(--primary);overflow:hidden;background:var(--primary3);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nav-logo img{width:100%;height:100%;object-fit:contain;border-radius:8px;padding:2px;}
+.nav-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--ink);line-height:1.2;}
+.nav-sub{font-size:10.5px;color:var(--muted);font-weight:500;letter-spacing:.07em;text-transform:uppercase;}
+.btn-logout{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--primary3);border:1.5px solid var(--primary);color:var(--primary);border-radius:9px;cursor:pointer;transition:background .2s,color .2s,transform .15s;flex-shrink:0;}
+.btn-logout:hover{background:var(--primary);color:#fff;transform:translateY(-1px);}
+.btn-logout i{font-size:15px;}
+
+/* INFO BAR */
+.info-bar{position:fixed;top:var(--nav-h);left:0;right:0;height:var(--info-h);z-index:199;background:rgba(15,155,110,.08);border-bottom:1px solid rgba(15,155,110,.15);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;}
+.info-bar-inner{max-width:1100px;width:100%;padding:0 28px;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;}
+.info-item{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:500;color:var(--primary2);white-space:nowrap;}
+.info-item i{font-size:10px;color:var(--primary);}
+.info-sep{width:1px;height:12px;background:rgba(15,155,110,.25);}
+
+/* PAGE */
+.page{position:relative;z-index:1;flex:1;padding-top:calc(var(--nav-h) + var(--info-h) + 36px);padding-bottom:60px;padding-left:24px;padding-right:24px;}
+.page-wrap{max-width:1000px;margin:0 auto;}
+
+/* WELCOME HEADER */
+.welcome-head{margin-bottom:32px;animation:phIn .6s cubic-bezier(.22,1,.36,1) both;}
+@keyframes phIn{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+.welcome-head h1{font-family:'Playfair Display',serif;font-size:clamp(26px,5vw,38px);font-weight:700;color:var(--ink);line-height:1.2;margin-bottom:6px;}
+.welcome-head h1 em{font-style:italic;color:var(--primary);}
+.welcome-head p{font-size:14px;color:var(--muted);line-height:1.6;}
+
+/* ROLE BADGE */
+.role-badge{display:inline-flex;align-items:center;gap:7px;background:var(--primary3);border:1px solid rgba(15,155,110,.2);border-radius:99px;padding:6px 16px;font-size:13px;font-weight:600;color:var(--primary2);margin-bottom:14px;}
+.role-badge i{font-size:12px;color:var(--primary);}
+
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px;animation:gridIn .5s .1s cubic-bezier(.22,1,.36,1) both;}
+@keyframes gridIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* PAGE CARD */
+.pg-card{background:rgba(255,255,255,.97);border:1px solid var(--border);border-radius:20px;padding:26px 18px 22px;display:flex;flex-direction:column;align-items:center;gap:11px;cursor:pointer;text-decoration:none;transition:transform .25s,box-shadow .25s,border-color .22s;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(15,155,110,.07);}
+.pg-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--teal));transform:scaleX(0);transition:transform .3s;transform-origin:left;}
+.pg-card:hover{transform:translateY(-5px);box-shadow:0 16px 40px rgba(15,155,110,.15);border-color:var(--primary);}
+.pg-card:hover::after{transform:scaleX(1);}
+.pg-card:hover .card-icon{transform:scale(1.1) rotate(-4deg);}
+.card-icon{width:64px;height:64px;border-radius:17px;background:linear-gradient(135deg,var(--primary3),#a7f3d0);display:flex;align-items:center;justify-content:center;transition:transform .25s;flex-shrink:0;}
+.card-icon i{font-size:26px;color:var(--primary);}
+.card-name{font-family:'Playfair Display',serif;font-size:14.5px;font-weight:700;color:var(--ink);text-align:center;line-height:1.3;}
+
+/* GENDER MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(15,34,25,.55);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
+.modal-ov.open{display:flex;}
+.modal{background:#fff;border-radius:22px;padding:0;max-width:400px;width:100%;box-shadow:0 20px 50px rgba(15,34,25,.2);animation:modalIn .35s cubic-bezier(.34,1.56,.64,1) both;overflow:hidden;}
+@keyframes modalIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+.modal-top{padding:24px 26px 18px;position:relative;}
+.modal-top::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--teal));}
+.modal-top h3{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--ink);margin-bottom:5px;}
+.modal-top p{font-size:13px;color:var(--muted);line-height:1.6;}
+.modal-body{padding:6px 26px 24px;}
+.gender-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+.g-opt{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--border);border-radius:11px;cursor:pointer;transition:all .2s;user-select:none;}
+.g-opt:hover{border-color:var(--primary);background:var(--primary3);}
+.g-opt.selected{border-color:var(--primary);background:var(--primary3);}
+.g-opt input[type=radio]{display:none;}
+.g-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--faint);background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.g-opt.selected .g-dot{border-color:var(--primary);background:var(--primary);}
+.g-dot::after{content:'';width:7px;height:7px;border-radius:50%;background:#fff;opacity:0;transition:opacity .2s;}
+.g-opt.selected .g-dot::after{opacity:1;}
+.g-lbl{font-size:14px;font-weight:500;color:var(--ink2);}
+.g-opt.selected .g-lbl{color:var(--primary2);font-weight:600;}
+.btn-submit{width:100%;padding:13px;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;border:none;border-radius:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:transform .18s,box-shadow .2s;box-shadow:0 4px 20px rgba(15,155,110,.28);display:flex;align-items:center;justify-content:center;gap:8px;position:relative;overflow:hidden;}
+.btn-submit:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(15,155,110,.36);}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.bt{display:block;transition:opacity .2s;}
+.bl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
+.btn-submit.ld .bt{opacity:0;}
+.btn-submit.ld .bl{opacity:1;}
+.lspin{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;}
+@keyframes rot{to{transform:rotate(360deg)}}
+.g-err{font-size:12px;color:var(--error);margin-bottom:10px;min-height:16px;text-align:center;}
+
+/* LOADING */
+.loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:16px;}
+.l-ring{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-wrap p{font-size:14px;color:var(--muted);}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);padding:12px 20px;border-radius:12px;font-size:13.5px;font-weight:500;opacity:0;transition:all .38s cubic-bezier(.34,1.56,.64,1);z-index:9999;width:max-content;max-width:90vw;display:flex;align-items:center;gap:9px;box-shadow:0 8px 32px rgba(0,0,0,.14);}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1;}
+.toast.scs{background:rgba(5,150,105,.96);color:#fff;}
+.toast.err{background:rgba(220,38,38,.96);color:#fff;}
+
+@media(max-width:640px){
+  .nav-inner{padding:0 16px;}
+  .nav-sub{display:none;}
+  .info-bar-inner{padding:0 14px;gap:10px;}
+  .info-item{font-size:11px;}
+  .info-sep{display:none;}
+  .page{padding-left:14px;padding-right:14px;}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;}
+  .pg-card{padding:20px 12px 16px;}
+  .card-icon{width:54px;height:54px;border-radius:14px;}
+  .card-icon i{font-size:22px;}
+  .card-name{font-size:13px;}
+}
+</style>
+</head>
+<body>
+<div class="bg-fixed"><div class="bg-blob b1"></div><div class="bg-blob b2"></div><div class="bg-blob b3"></div><div class="bg-dots"></div></div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="proctor-home.html">
+      <div class="nav-logo" id="nLW"><img src="https://github.com/190031124ravi/images/blob/main/lpsosimage12.jpg?raw=true" alt="LPS" id="nLI"/></div>
+      <div><div class="nav-name">LPS Omniscient Solutions</div><div class="nav-sub">Proctor Portal</div></div>
+    </a>
+    <button class="btn-logout" onclick="doLogout()" title="Logout"><i class="fa-solid fa-power-off"></i></button>
+  </div>
+</nav>
+
+<!-- INFO BAR -->
+<div class="info-bar" id="infoBar" style="display:none;">
+  <div class="info-bar-inner">
+    <div class="info-item"><i class="fa-solid fa-user"></i><span id="iName">—</span></div>
+    <div class="info-sep"></div>
+    <div class="info-item"><i class="fa-solid fa-envelope"></i><span id="iEmail">—</span></div>
+    <div class="info-sep"></div>
+    <div class="info-item"><i class="fa-solid fa-phone"></i><span id="iPhone">—</span></div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-wrap">
+
+    <!-- LOADING -->
+    <div class="loading-wrap" id="loadWrap">
+      <div class="l-ring"></div>
+      <p>Loading your portal…</p>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashWrap" style="display:none;">
+
+<!-- WELCOME -->
+      <div class="welcome-head">
+        <div class="role-badge" id="roleBadge" style="display:none;">
+          <i class="fa-solid fa-id-badge"></i>
+          <span id="roleText">—</span>
+        </div>
+        <h1>Welcome <em id="firstName">back</em>!</h1>
+        <p>Select a section below to manage your work.</p>
+      </div>
+
+      <!-- GRID -->
+      <div class="grid" id="pageGrid"></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- GENDER MODAL -->
+<div class="modal-ov" id="genderModal">
+  <div class="modal">
+    <div class="modal-top">
+      <h3>Complete Your Profile</h3>
+      <p>Please select your gender to continue. This helps us personalise your experience.</p>
+    </div>
+    <div class="modal-body">
+      <div class="gender-opts" id="genderOpts">
+        <div class="g-opt" data-val="male" onclick="selGender(this)">
+          <div class="g-dot"></div><span class="g-lbl">Male</span>
+          <input type="radio" name="gender" value="male"/>
+        </div>
+        <div class="g-opt" data-val="female" onclick="selGender(this)">
+          <div class="g-dot"></div><span class="g-lbl">Female</span>
+          <input type="radio" name="gender" value="female"/>
+        </div>
+        <div class="g-opt" data-val="other" onclick="selGender(this)">
+          <div class="g-dot"></div><span class="g-lbl">Other</span>
+          <input type="radio" name="gender" value="other"/>
+        </div>
+      </div>
+      <div class="g-err" id="gErr"></div>
+      <button class="btn-submit" id="gSubmitBtn" onclick="submitGender()">
+        <span class="bt"><i class="fa-solid fa-check" style="font-size:13px;"></i> Save & Continue</span>
+        <span class="bl"><span class="lspin"></span></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="config.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+var _sb      = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+var _profile = null;
+var _selGender = null;
+
+document.getElementById('nLI').onerror = function(){
+  document.getElementById('nLW').innerHTML = '<i class="fa-solid fa-tv" style="font-size:20px;color:#0f9b6e;"></i>';
+};
+
+var _tT;
+function showToast(msg, type){
+  var t = document.getElementById('toast');
+  t.innerHTML = '<span>' + msg + '</span>';
+  t.className = 'toast on ' + (type || 'inf');
+  clearTimeout(_tT);
+  _tT = setTimeout(function(){ t.classList.remove('on'); }, 4000);
+}
+
+// Pages grid definition — add/remove as features are built
+var PAGES = [
+  { name: 'My Profile',        icon: 'fa-solid fa-user',           href: 'proctor-profile.html' },
+  { name: 'Work Willing Form', icon: 'fa-solid fa-briefcase',      href: 'proctor-workwilling.html' },
+  { name: 'Payment Form',      icon: 'fa-solid fa-credit-card',    href: 'proctor-payments.html' },
+  { name: 'Ticket Support',    icon: 'fa-solid fa-ticket',         href: 'proctor-ticket.html' },
+  { name: 'Attendance',        icon: 'fa-solid fa-calendar-check', href: 'proctor-attendance.html' },
+  { name: 'Bank Details',      icon: 'fa-solid fa-building-columns', href: 'proctor-bank.html' },
+];
+
+// Session check
+document.addEventListener('DOMContentLoaded', async function(){
+  try {
+    var s = await _sb.auth.getSession();
+    if (!s.data || !s.data.session){
+      window.location.replace('login.html');
+      return;
+    }
+
+    // Fetch user profile from users table
+    var uid = s.data.session.user.id;
+    var res = await _sb.from('users')
+      .select('id, name, email, phone, gender, role, proctor_experience')
+      .eq('id', uid)
+      .single();
+
+    if (res.error || !res.data){
+      window.location.replace('login.html');
+      return;
+    }
+
+    _profile = res.data;
+
+    // Populate info bar
+    document.getElementById('iName').textContent  = _profile.name  || '—';
+    document.getElementById('iEmail').textContent = _profile.email || '—';
+    document.getElementById('iPhone').textContent = _profile.phone || '—';
+    document.getElementById('infoBar').style.display = 'flex';
+
+    // First name for welcome heading
+    var first = (_profile.name || 'Proctor').split(' ')[0];
+    document.getElementById('firstName').textContent = first;
+
+    // Role badge
+    if (_profile.role){
+      document.getElementById('roleText').textContent = _profile.role;
+      document.getElementById('roleBadge').style.display = 'inline-flex';
+    }
+
+    // Show dashboard
+    document.getElementById('loadWrap').style.display = 'none';
+    document.getElementById('dashWrap').style.display = 'block';
+
+    // Build grid
+    buildGrid();
+
+    // Gender modal — show if gender not set
+    if (!_profile.gender){
+      document.getElementById('genderModal').classList.add('open');
+    }
+
+  } catch(e){
+    window.location.replace('login.html');
+  }
+});
+
+function buildGrid(){
+  var grid = document.getElementById('pageGrid');
+  grid.innerHTML = '';
+  PAGES.forEach(function(p, idx){
+    var a       = document.createElement('a');
+    a.href      = p.href;
+    a.className = 'pg-card';
+    a.style.animationDelay = (idx * 0.07) + 's';
+    a.innerHTML =
+      '<div class="card-icon"><i class="' + p.icon + '"></i></div>' +
+      '<div class="card-name">' + p.name + '</div>';
+    grid.appendChild(a);
+  });
+}
+
+// Gender selection
+function selGender(el){
+  document.querySelectorAll('.g-opt').forEach(function(o){ o.classList.remove('selected'); });
+  el.classList.add('selected');
+  _selGender = el.getAttribute('data-val');
+  document.getElementById('gErr').textContent = '';
+}
+
+async function submitGender(){
+  if (!_selGender){
+    document.getElementById('gErr').textContent = 'Please select a gender to continue.';
+    return;
+  }
+
+  var btn = document.getElementById('gSubmitBtn');
+  btn.classList.add('ld'); btn.disabled = true;
+
+  try {
+    var res = await _sb.from('users')
+      .update({ gender: _selGender })
+      .eq('id', _profile.id);
+
+    if (res.error) throw res.error;
+
+    _profile.gender = _selGender;
+    document.getElementById('genderModal').classList.remove('open');
+    showToast('Profile updated successfully!', 'scs');
+  } catch(ex){
+    document.getElementById('gErr').textContent = ex.message || 'Failed to save. Try again.';
+  } finally {
+    btn.classList.remove('ld'); btn.disabled = false;
+  }
+}
+
+async function doLogout(){
+  try { await _sb.auth.signOut(); } catch(e){}
+  window.location.replace('login.html');
+}
+</script>
+</body>
+</html>

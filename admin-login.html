@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Login — LPSOS</title>
+<meta http-equiv="Content-Security-Policy"
+  content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' https://qwcngezsbtlorkvgyeqz.supabase.co https://api.ipify.org; img-src 'self' https://raw.githubusercontent.com https://github.com data:;"/>
+<link rel="icon" href="https://raw.githubusercontent.com/190031124ravi/images/main/lpsos.ico"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f2faf6;--ink:#0f2219;--ink2:#2d5043;
+  --muted:#7a9e8e;--faint:#c0d8ce;--border:#d5ebe0;
+  --primary:#0f9b6e;--primary2:#0a7a56;--primary3:#e4f5ed;
+  --pg:rgba(15,155,110,.12);--teal:#0d8fa0;
+  --error:#dc2626;--nav-h:68px;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--ink);background:var(--bg);overflow-x:hidden;min-height:100vh;display:flex;flex-direction:column;}
+.bg-fixed{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:linear-gradient(150deg,#f2faf6 0%,#e8f5ee 40%,#edfaf4 70%,#e4f7ed 100%);}
+.bg-blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.38;animation:blobF 10s ease-in-out infinite;}
+.b1{width:560px;height:560px;background:radial-gradient(#a7f3d0,#6ee7b7);top:-180px;right:-140px;}
+.b2{width:420px;height:420px;background:radial-gradient(#99f6e4,#5eead4);bottom:-110px;left:-100px;animation-delay:-4s;}
+.b3{width:280px;height:280px;background:radial-gradient(#d1fae5,#a7f3d0);top:50%;left:35%;animation-delay:-7s;}
+@keyframes blobF{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(18px,-18px) scale(1.05);}66%{transform:translate(-14px,14px) scale(.96);}}
+.bg-dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(15,155,110,.055) 1px,transparent 1px);background-size:32px 32px;}
+/* NAVBAR */
+.navbar{position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:200;background:rgba(255,255,255,.93);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);box-shadow:0 2px 16px rgba(15,155,110,.07);}
+.nav-inner{max-width:1100px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 28px;}
+.nav-brand{display:flex;align-items:center;gap:11px;text-decoration:none;flex-shrink:0;}
+.nav-logo{width:42px;height:42px;border-radius:10px;border:2px solid var(--primary);overflow:hidden;background:var(--primary3);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nav-logo img{width:100%;height:100%;object-fit:contain;border-radius:8px;padding:2px;}
+.nav-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--ink);line-height:1.2;}
+.nav-sub{font-size:10.5px;color:var(--muted);font-weight:500;letter-spacing:.07em;text-transform:uppercase;}
+.nav-back{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:600;color:var(--primary2);background:var(--primary3);border:1.5px solid var(--primary);border-radius:8px;padding:8px 18px;text-decoration:none;transition:background .2s,transform .15s;}
+.nav-back:hover{background:var(--primary);color:#fff;transform:translateY(-1px);}
+/* PAGE */
+.page{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(var(--nav-h) + 48px) 24px 72px;}
+/* STEP BAR */
+.step-bar{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:24px;}
+.sdot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;border:2px solid var(--faint);color:var(--muted);background:var(--bg);transition:all .35s cubic-bezier(.34,1.56,.64,1);}
+.sdot.act{border-color:var(--primary);background:var(--primary);color:#fff;transform:scale(1.1);box-shadow:0 4px 14px rgba(15,155,110,.28);}
+.sdot.done{border-color:#059669;background:#059669;color:#fff;}
+.sline{width:36px;height:2px;background:var(--border);transition:background .4s;}
+.sline.done{background:#059669;}
+.slbl-row{display:flex;justify-content:space-between;margin:-14px 0 22px;}
+.slbl{font-size:10.5px;color:var(--muted);font-weight:500;text-align:center;flex:1;}
+.slbl.act{color:var(--primary);font-weight:600;}
+.slbl.done{color:#059669;}
+/* CARD */
+.card{background:rgba(255,255,255,.97);border-radius:22px;padding:36px 38px 32px;box-shadow:0 8px 44px rgba(15,155,110,.12),0 2px 8px rgba(0,0,0,.04),0 0 0 1px rgba(15,155,110,.06);position:relative;overflow:hidden;animation:cardIn .65s .1s cubic-bezier(.22,1,.36,1) both;width:100%;max-width:420px;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--teal));border-radius:22px 22px 0 0;}
+@keyframes cardIn{from{opacity:0;transform:translateY(28px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+/* PANEL ICON */
+.s-icon{width:58px;height:58px;border-radius:16px;display:grid;place-items:center;margin:0 auto 14px;animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes popIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+.s-icon i{font-size:26px;}
+.ico-lock{background:linear-gradient(135deg,var(--primary3),#a7f3d0);}.ico-lock i{color:var(--primary);}
+.ico-otp{background:linear-gradient(135deg,#e0e7ff,#a5b4fc);}.ico-otp i{color:#4338ca;}
+.s-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ink);text-align:center;margin-bottom:5px;}
+.s-title em{font-style:italic;color:var(--primary);}
+.s-desc{font-size:13px;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:20px;}
+/* FIELDS */
+.field{margin-bottom:17px;}
+.field label{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink2);font-weight:700;margin-bottom:7px;}
+.iw{position:relative;}
+.iw svg.ic,.iw i.ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;font-size:15px;color:var(--faint);pointer-events:none;transition:color .25s;}
+.iw input{width:100%;padding:12px 42px 12px 41px;border:1.5px solid var(--border);border-radius:12px;background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color .25s,box-shadow .25s,background .2s;-webkit-appearance:none;appearance:none;}
+.iw input::placeholder{color:var(--faint);}
+.iw input:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px var(--pg);}
+.iw input.inv{border-color:var(--error);background:#fef2f2;}
+.eye{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);display:flex;align-items:center;padding:4px;transition:color .2s;}
+.eye:hover{color:var(--ink);}
+.ferr{font-size:11.5px;color:var(--error);margin-top:4px;min-height:16px;}
+/* GLOBAL ERROR */
+.g-err{background:#fef2f2;border:1px solid rgba(220,38,38,.2);border-radius:11px;padding:11px 14px;margin-bottom:16px;font-size:13px;color:var(--error);display:none;align-items:center;gap:8px;}
+.g-err.show{display:flex;}
+/* EMAIL DISPLAY */
+.em-show{background:var(--primary3);border:1px solid rgba(15,155,110,.2);border-radius:11px;padding:11px 15px;display:flex;align-items:center;gap:9px;margin-bottom:16px;}
+.em-show i{font-size:14px;color:var(--primary);flex-shrink:0;}
+.em-show span{font-size:13.5px;font-weight:600;color:var(--primary2);word-break:break-all;}
+/* OTP INPUT */
+.otp-input{letter-spacing:.3em;font-size:20px;font-weight:700;text-align:center;}
+/* BUTTON */
+.btn-p{width:100%;padding:13px;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;border:none;border-radius:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;position:relative;overflow:hidden;transition:transform .18s,box-shadow .2s;box-shadow:0 4px 20px rgba(15,155,110,.28);display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-p:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(15,155,110,.36);}
+.btn-p:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.bt{display:block;transition:opacity .2s;}
+.bl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
+.btn-p.ld .bt{opacity:0;}
+.btn-p.ld .bl{opacity:1;}
+.lspin{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;}
+@keyframes rot{to{transform:rotate(360deg)}}
+.btn-ghost{width:100%;padding:10px;background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:var(--muted);cursor:pointer;margin-top:8px;transition:color .2s;}
+.btn-ghost:hover{color:var(--primary);}
+/* FORGOT */
+.forgot-row{text-align:right;margin-bottom:14px;margin-top:-6px;}
+.forgot-row a{font-size:12.5px;color:var(--primary);font-weight:600;text-decoration:none;}
+.forgot-row a:hover{text-decoration:underline;}
+/* RESEND */
+.resend-row{text-align:center;margin-top:14px;font-size:13px;color:var(--muted);}
+.resend-btn{background:none;border:none;color:var(--primary);font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;padding:0;}
+.resend-btn:disabled{color:var(--faint);cursor:not-allowed;}
+/* PANEL ANIMATION */
+.panel{animation:panIn .4s cubic-bezier(.22,1,.36,1) both;}
+@keyframes panIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
+/* NOT-ADMIN BOX */
+.not-admin-box{background:#fef2f2;border:1px solid rgba(220,38,38,.2);border-radius:11px;padding:13px 15px;margin-bottom:14px;}
+.not-admin-box p{font-size:13px;color:#991b1b;line-height:1.65;margin:0;}
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);padding:12px 20px;border-radius:12px;font-size:13.5px;font-weight:500;opacity:0;transition:all .38s cubic-bezier(.34,1.56,.64,1);z-index:9999;width:max-content;max-width:90vw;display:flex;align-items:center;gap:9px;box-shadow:0 8px 32px rgba(0,0,0,.14);}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1;}
+.toast.scs{background:rgba(5,150,105,.96);color:#fff;}
+.toast.err{background:rgba(220,38,38,.96);color:#fff;}
+.toast.inf{background:rgba(255,255,255,.97);border:1px solid var(--border);color:var(--ink);}
+@media(max-width:600px){
+  .nav-inner{padding:0 16px;}
+  .nav-sub{display:none;}
+  .page{padding:calc(var(--nav-h) + 36px) 16px 60px;}
+  .card{padding:26px 18px 22px;border-radius:18px;}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-fixed">
+  <div class="bg-blob b1"></div><div class="bg-blob b2"></div><div class="bg-blob b3"></div>
+  <div class="bg-dots"></div>
+</div>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a class="nav-brand" href="admin.html">
+      <div class="nav-logo" id="nLW">
+        <img src="https://github.com/190031124ravi/images/blob/main/lpsosimage12.jpg?raw=true" alt="LPS" id="nLI"/>
+      </div>
+      <div>
+        <div class="nav-name">LPS Omniscient Solutions</div>
+        <div class="nav-sub">Admin Portal</div>
+      </div>
+    </a>
+    <a class="nav-back" href="admin.html">
+      <i class="fa-solid fa-arrow-left" style="font-size:13px;"></i>Back
+    </a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="card">
+
+    <!-- STEP BAR -->
+    <div class="step-bar" id="stepBar">
+      <div class="sdot act" id="sd1">1</div>
+      <div class="sline" id="sl1"></div>
+      <div class="sdot" id="sd2">2</div>
+      <div class="sline" id="sl2"></div>
+      <div class="sdot" id="sd3">3</div>
+    </div>
+    <div class="slbl-row" id="stepLabels">
+      <div class="slbl act" id="stl1">Credentials</div>
+      <div class="slbl" id="stl2">OTP</div>
+      <div class="slbl" id="stl3">Access</div>
+    </div>
+
+    <!-- ─── PANEL 1: Email + Password ─── -->
+    <div id="p1" class="panel">
+      <div class="s-icon ico-lock"><i class="fa-solid fa-lock"></i></div>
+      <div class="s-title">Admin <em>Login</em></div>
+      <div class="s-desc">Enter your credentials to receive a one-time verification code.</div>
+
+      <div class="g-err" id="gErr1">
+        <i class="fa-solid fa-circle-exclamation" style="font-size:15px;flex-shrink:0;"></i>
+        <span id="gErr1Txt"></span>
+      </div>
+
+      <div class="field">
+        <label>Email Address</label>
+        <div class="iw">
+          <input type="email" id="loginEmail" placeholder="admin@example.com" autocomplete="email" maxlength="254" oninput="clrErr1()"/>
+          <i class="fa-solid fa-envelope ic"></i>
+        </div>
+        <div class="ferr" id="e-em"></div>
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <div class="iw">
+          <input type="password" id="loginPw" placeholder="Enter your password" autocomplete="current-password" oninput="clrErr1()" onkeydown="if(event.key==='Enter')doStep1()"/>
+          <i class="fa-solid fa-lock ic"></i>
+          <button type="button" class="eye" onclick="togEye('loginPw','eyePw')">
+            <i id="eyePw" class="fa-solid fa-eye" style="font-size:15px;"></i>
+          </button>
+        </div>
+        <div class="ferr" id="e-pw"></div>
+      </div>
+
+      <div class="forgot-row"><a href="admin-forgot-password.html">Forgot Password?</a></div>
+
+      <button class="btn-p" id="btn1" onclick="doStep1()">
+        <span class="bt"><i class="fa-solid fa-paper-plane" style="font-size:13px;"></i> Send OTP</span>
+        <span class="bl"><span class="lspin"></span></span>
+      </button>
+    </div>
+
+    <!-- ─── PANEL 2: OTP Verification ─── -->
+    <div id="p2" style="display:none;" class="panel">
+      <div class="s-icon ico-otp"><i class="fa-solid fa-mobile-screen-button"></i></div>
+      <div class="s-title">Verify <em>OTP</em></div>
+      <div class="s-desc">An 8-digit code was sent to:</div>
+
+      <div class="em-show">
+        <i class="fa-solid fa-envelope"></i>
+        <span id="otpEmail">—</span>
+      </div>
+
+      <div class="g-err" id="gErr2">
+        <i class="fa-solid fa-circle-exclamation" style="font-size:15px;flex-shrink:0;"></i>
+        <span id="gErr2Txt"></span>
+      </div>
+
+      <div class="field">
+        <label>One-Time Password</label>
+        <div class="iw">
+          <input type="text" id="otpInput" class="otp-input" placeholder="————————" maxlength="8" inputmode="numeric" autocomplete="one-time-code" oninput="this.value=this.value.replace(/\D/g,'').slice(0,8)" onkeydown="if(event.key==='Enter')doStep2()"/>
+          <i class="fa-solid fa-key ic"></i>
+        </div>
+        <div class="ferr" id="e-otp"></div>
+      </div>
+
+      <button class="btn-p" id="btn2" onclick="doStep2()">
+        <span class="bt"><i class="fa-solid fa-shield-halved" style="font-size:13px;"></i> Verify & Sign In</span>
+        <span class="bl"><span class="lspin"></span></span>
+      </button>
+
+      <div class="resend-row">
+        Didn't receive it?
+        <button class="resend-btn" id="resendBtn" onclick="resendOtp()" disabled>Resend OTP</button>
+        <span id="resendCd" style="color:var(--muted);font-weight:500;font-size:12px;"></span>
+      </div>
+
+      <button class="btn-ghost" onclick="backToStep1()">Use a different account</button>
+    </div>
+
+    <!-- ─── PANEL 3: Not an admin (wrong account) ─── -->
+    <div id="p3" style="display:none;" class="panel">
+      <div class="s-icon ico-lock" style="background:linear-gradient(135deg,#fee2e2,#fca5a5);">
+        <i class="fa-solid fa-ban" style="color:#dc2626;"></i>
+      </div>
+      <div class="s-title" style="color:#991b1b;">Access <em style="color:#dc2626;">Denied</em></div>
+      <div class="s-desc">Your account does not have admin access.</div>
+      <div class="not-admin-box">
+        <p>This portal is restricted to authorised administrators only. If you believe this is an error, contact your system administrator.</p>
+      </div>
+      <button class="btn-p" style="background:linear-gradient(135deg,#dc2626,#991b1b);box-shadow:0 4px 20px rgba(220,38,38,.28);" onclick="signOutAndReset()">
+        <span class="bt"><i class="fa-solid fa-right-from-bracket" style="font-size:13px;"></i> Sign Out</span>
+        <span class="bl"><span class="lspin"></span></span>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="config.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+document.getElementById('nLI').onerror = function(){
+  document.getElementById('nLW').innerHTML = '<i class="fa-solid fa-tv" style="font-size:20px;color:#0f9b6e;"></i>';
+};
+
+// ── If already logged in as admin, skip to home ──────────────
+document.addEventListener('DOMContentLoaded', async function(){
+  try {
+    var res = await _sb.auth.getSession();
+    if (res.data && res.data.session){
+      var profile = await _sb.rpc('get_admin_profile');
+      if (profile.data && profile.data.is_admin){
+        window.location.replace('admin-home.html');
+      }
+    }
+  } catch(e){}
+});
+
+// ── Rate limiting ─────────────────────────────────────────────
+var _failCount    = 0;
+var _maxFails     = 5;
+var _lockedUntil  = 0;
+var _lockTimer    = null;
+
+function isLocked(){ return Date.now() < _lockedUntil; }
+
+function startLock(){
+  _lockedUntil = Date.now() + 30000;
+  document.getElementById('btn1').disabled = true;
+  var t = setInterval(function(){
+    var rem = Math.ceil((_lockedUntil - Date.now()) / 1000);
+    if (rem <= 0){
+      clearInterval(t);
+      _lockedUntil = 0;
+      _failCount = 0;
+      document.getElementById('btn1').disabled = false;
+      showErr1('');
+    } else {
+      showErr1('Too many attempts. Try again in ' + rem + 's.');
+    }
+  }, 500);
+}
+
+// ── Stored email for OTP step ─────────────────────────────────
+var _loginEmail = '';
+var _resendTimer = null;
+var _resendSecs  = 60;
+
+// ── Toast ─────────────────────────────────────────────────────
+var _tT;
+function showToast(msg, type){
+  var t = document.getElementById('toast');
+  t.innerHTML = '<span>' + msg + '</span>';
+  t.className = 'toast on ' + (type || 'inf');
+  clearTimeout(_tT);
+  _tT = setTimeout(function(){ t.classList.remove('on'); }, 4500);
+}
+
+// ── Eye toggle ────────────────────────────────────────────────
+function togEye(inputId, iconId){
+  var inp = document.getElementById(inputId);
+  var ico = document.getElementById(iconId);
+  if (inp.type === 'password'){
+    inp.type = 'text';
+    ico.className = 'fa-solid fa-eye-slash';
+  } else {
+    inp.type = 'password';
+    ico.className = 'fa-solid fa-eye';
+  }
+}
+
+// ── Step indicators ───────────────────────────────────────────
+function setStep(n){
+  for (var i = 1; i <= 3; i++){
+    var d = document.getElementById('sd' + i);
+    var l = document.getElementById('stl' + i);
+    if (i < n){ d.className='sdot done'; d.textContent='✓'; l.className='slbl done'; }
+    else if (i === n){ d.className='sdot act'; d.textContent=String(i); l.className='slbl act'; }
+    else { d.className='sdot'; d.textContent=String(i); l.className='slbl'; }
+    if (i < 3){
+      document.getElementById('sl' + i).className = 'sline' + (i < n ? ' done' : '');
+    }
+  }
+}
+
+// ── Error helpers ─────────────────────────────────────────────
+function showErr1(msg){
+  var el = document.getElementById('gErr1');
+  document.getElementById('gErr1Txt').textContent = msg;
+  el.classList.toggle('show', !!msg);
+}
+function showErr2(msg){
+  var el = document.getElementById('gErr2');
+  document.getElementById('gErr2Txt').textContent = msg;
+  el.classList.toggle('show', !!msg);
+}
+function clrErr1(){
+  showErr1('');
+  document.getElementById('loginEmail').classList.remove('inv');
+  document.getElementById('loginPw').classList.remove('inv');
+}
+
+// ── STEP 1: Sign in with email + password → triggers OTP email ─
+async function doStep1(){
+  if (isLocked()) return;
+
+  var email = document.getElementById('loginEmail').value.trim();
+  var pw    = document.getElementById('loginPw').value;
+  var ok    = true;
+
+  clrErr1();
+  document.getElementById('e-em').textContent = '';
+  document.getElementById('e-pw').textContent = '';
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    document.getElementById('e-em').textContent = 'Enter a valid email.';
+    document.getElementById('loginEmail').classList.add('inv');
+    ok = false;
+  }
+  if (!pw){
+    document.getElementById('e-pw').textContent = 'Please enter your password.';
+    document.getElementById('loginPw').classList.add('inv');
+    ok = false;
+  }
+  if (!ok) return;
+
+  var btn = document.getElementById('btn1');
+  btn.classList.add('ld'); btn.disabled = true;
+
+  try {
+    // Sign in with password — Supabase validates credentials
+    var res = await _sb.auth.signInWithPassword({ email: email, password: pw });
+
+    if (res.error){
+      btn.classList.remove('ld'); btn.disabled = false;
+      _failCount++;
+      if (_failCount >= _maxFails){ startLock(); return; }
+      var rem = _maxFails - _failCount;
+      var msg = res.error.message.toLowerCase().includes('invalid')
+        ? 'Invalid email or password. ' + rem + ' attempt' + (rem===1?'':'s') + ' remaining.'
+        : res.error.message;
+      showErr1(msg);
+      document.getElementById('loginEmail').classList.add('inv');
+      document.getElementById('loginPw').classList.add('inv');
+      return;
+    }
+
+    // Credentials valid — check if this user is an admin
+    var profile = await _sb.rpc('get_admin_profile');
+    if (!profile.data || !profile.data.is_admin){
+      // Valid Supabase user but NOT an admin — show access denied panel
+      await _sb.auth.signOut();
+      document.getElementById('p1').style.display = 'none';
+      document.getElementById('p3').style.display = 'block';
+      document.getElementById('stepBar').style.display = 'none';
+      document.getElementById('stepLabels').style.display = 'none';
+      return;
+    }
+
+    // Admin confirmed — sign out the password session and send OTP instead
+    // This means the final session is only created after OTP is verified
+    await _sb.auth.signOut();
+
+    // Now request OTP to the same email
+    var otpRes = await _sb.auth.signInWithOtp({
+      email: email,
+      options: { shouldCreateUser: false }
+    });
+
+    btn.classList.remove('ld'); btn.disabled = false;
+
+    if (otpRes.error){
+      showErr1('Failed to send OTP. Please try again.');
+      return;
+    }
+
+    // Move to OTP panel
+    _loginEmail = email;
+    _failCount  = 0;
+    document.getElementById('otpEmail').textContent = email;
+    document.getElementById('p1').style.display = 'none';
+    document.getElementById('p2').style.display = 'block';
+    document.getElementById('p2').className = 'panel';
+    setStep(2);
+    startResendTimer();
+    setTimeout(function(){ document.getElementById('otpInput').focus(); }, 300);
+
+  } catch(ex){
+    btn.classList.remove('ld'); btn.disabled = false;
+    showErr1('Something went wrong. Please try again.');
+  }
+}
+
+// ── STEP 2: Verify OTP ────────────────────────────────────────
+async function doStep2(){
+  var otp = document.getElementById('otpInput').value.trim();
+  showErr2('');
+  document.getElementById('e-otp').textContent = '';
+
+  if (!otp || otp.length !== 8){
+    document.getElementById('e-otp').textContent = 'Enter the 8-digit OTP.';
+    return;
+  }
+
+  var btn = document.getElementById('btn2');
+  btn.classList.add('ld'); btn.disabled = true;
+
+  try {
+    var res = await _sb.auth.verifyOtp({
+      email: _loginEmail,
+      token: otp,
+      type: 'email'
+    });
+
+    if (res.error){
+      btn.classList.remove('ld'); btn.disabled = false;
+      var msg = res.error.message.toLowerCase().includes('expired')
+        ? 'OTP has expired. Please request a new one.'
+        : 'Invalid OTP. Please check and try again.';
+      showErr2(msg);
+      return;
+    }
+
+    // OTP verified — session is now live. Log the login activity.
+    setStep(3);
+    showToast('Login successful!', 'scs');
+
+    try {
+      // Fetch real client IP then log
+      var ipRes = await fetch('https://api.ipify.org?format=json');
+      var ipData = await ipRes.json();
+      var clientIp = ipData.ip || 'unknown';
+      await _sb.rpc('log_admin_login', { p_ip: clientIp });
+    } catch(e){}
+
+    // Small delay so user sees the success toast, then redirect
+    setTimeout(function(){
+      window.location.replace('admin-home.html');
+    }, 800);
+
+  } catch(ex){
+    btn.classList.remove('ld'); btn.disabled = false;
+    showErr2('Something went wrong. Please try again.');
+  }
+}
+
+// ── Resend OTP ────────────────────────────────────────────────
+function startResendTimer(){
+  var btn = document.getElementById('resendBtn');
+  var cd  = document.getElementById('resendCd');
+  btn.disabled = true;
+  _resendSecs  = 60;
+  cd.textContent = '(' + _resendSecs + 's)';
+  clearInterval(_resendTimer);
+  _resendTimer = setInterval(function(){
+    _resendSecs--;
+    cd.textContent = '(' + _resendSecs + 's)';
+    if (_resendSecs <= 0){
+      clearInterval(_resendTimer);
+      btn.disabled = false;
+      cd.textContent = '';
+    }
+  }, 1000);
+}
+
+async function resendOtp(){
+  document.getElementById('resendBtn').disabled = true;
+  try {
+    var res = await _sb.auth.signInWithOtp({
+      email: _loginEmail,
+      options: { shouldCreateUser: false }
+    });
+    if (res.error){
+      showToast('Could not resend OTP. Try again.', 'err');
+      document.getElementById('resendBtn').disabled = false;
+    } else {
+      showToast('OTP resent to ' + _loginEmail, 'scs');
+      startResendTimer();
+    }
+  } catch(e){
+    showToast('Could not resend. Try again.', 'err');
+    document.getElementById('resendBtn').disabled = false;
+  }
+}
+
+// ── Back to step 1 ────────────────────────────────────────────
+function backToStep1(){
+  clearInterval(_resendTimer);
+  _loginEmail = '';
+  document.getElementById('otpInput').value = '';
+  document.getElementById('p2').style.display = 'none';
+  document.getElementById('p1').style.display = 'block';
+  document.getElementById('p1').className = 'panel';
+  setStep(1);
+  showErr1('');
+  showErr2('');
+}
+
+// ── Sign out from access denied panel ────────────────────────
+async function signOutAndReset(){
+  await _sb.auth.signOut();
+  window.location.replace('admin.html');
+}
+</script>
+</body>
+</html>
